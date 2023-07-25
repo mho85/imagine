@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -60,18 +61,19 @@ func downloadCatalogueImages() {
 		return
 	}
 
-	// For each row: download and rename, increment
 	for i, row := range rows {
+		// Skip title row
 		if i == 0 {
 			continue
 		}
 
-		if lotId, err = strconv.Atoi(row[0]); err != nil {
-			log.Fatalf("Line %d, col 1: invalid value (expected number): %x", i+1, row[0])
+		// Row parsing
+		rawId := strings.Trim(row[0], " ")
+		if lotId, err = strconv.Atoi(rawId); err != nil {
+			log.Fatalf("Line %d, col 1: invalid value (expected number): %x", i+1, rawId)
 			return
 		}
 
-		// Existing URL
 		fileUrl = row[2]
 		if fileUrl != "" {
 			if v, ok := lots[lotId]; ok {
