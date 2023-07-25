@@ -1,4 +1,4 @@
-module github.com/mho85/imagine
+module imagine
 
 go 1.20
 
