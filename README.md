@@ -10,3 +10,12 @@ Download images from URLs in an Excel catalog into a "catalog" folder
 	 - Lot number (must be a number)
 	 - Lot extension `ex: bis, ter`
 	 - Image URL
+
+
+## For devs
+- Download dependencies: `go mod download`
+- Build win exe: `GOOS=windows GOARCH=amd64 go build imagine`
+
+## Run
+- Put imagine.exe and the Excel file in the same folder
+- Run imagine.exe (The images should be downloaded into a subfolder called "catalog")
