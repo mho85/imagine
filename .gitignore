@@ -29,5 +29,6 @@ catalog.xlsx
 *.jpg
 catalog
 catalog/*.jpg
+.~lock.*
 
 # End of https://www.toptal.com/developers/gitignore/api/go

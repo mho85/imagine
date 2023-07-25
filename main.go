@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -36,10 +35,9 @@ func downloadFile(filepath string, url string) error {
 
 // Download images from a catalogue
 func downloadCatalogueImages() {
-	lots := make(map[int]int)
 	var err error
-	var lotId int
-	var fileUrl, fileName string
+	var fileName string
+	var nbDownloads int = 0
 
 	// Open catalog xlsx file
 	f, err := excelize.OpenFile("catalog.xlsx")
@@ -63,37 +61,35 @@ func downloadCatalogueImages() {
 
 	for i, row := range rows {
 		// Skip title row
-		if i == 0 {
+		if i == 0 || len(row) < 3 {
 			continue
 		}
 
 		// Row parsing
-		rawId := strings.Trim(row[0], " ")
-		if lotId, err = strconv.Atoi(rawId); err != nil {
-			log.Fatalf("Line %d, col 1: invalid value (expected number): %x", i+1, rawId)
+		id := strings.Trim(row[0], " ")
+		ext := strings.Trim(row[1], " ")
+		fileUrl := row[2]
+		if _, err = strconv.Atoi(id); err != nil {
+			log.Fatalln("Line " + strconv.Itoa(i+1) + ", col 1: invalid value (expected number): " + id)
 			return
 		}
 
-		fileUrl = row[2]
-		if fileUrl != "" {
-			if v, ok := lots[lotId]; ok {
-				lots[lotId] = v + 1
-			} else {
-				lots[lotId] = 1
-			}
-
-			fileName = fmt.Sprintf("%d-%d.jpg", lotId, lots[lotId]) //TODO: Check format with bizdev
-
-			// Download
-			err := downloadFile("catalog/"+fileName, fileUrl)
-			if err != nil {
-				log.Panicf("Cannot download %s", fileName)
-			}
-			fmt.Println("Downloaded: " + fileName)
+		if ext == "" {
+			fileName = id + "_1.jpg"
+		} else {
+			fileName = id + "-" + ext + "_1.jpg"
 		}
 
+		// Download
+		err := downloadFile("catalog/"+fileName, fileUrl)
+		if err != nil {
+			log.Panicln("Cannot download " + fileName)
+		}
+		log.Println("Downloaded: " + fileName)
+		nbDownloads = nbDownloads + 1
 	}
-	fmt.Println(lots)
+
+	log.Println("Downloaded images: " + strconv.Itoa(nbDownloads))
 }
 
 func main() {
