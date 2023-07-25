@@ -27,6 +27,7 @@ go.work
 # Test file
 catalog.xlsx
 *.jpg
+catalog
 catalog/*.jpg
 
 # End of https://www.toptal.com/developers/gitignore/api/go
